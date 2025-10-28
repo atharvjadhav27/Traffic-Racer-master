@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using DG.Tweening;
 using Common;
 
+
 namespace TrafficRacer
 {
     /// <summary>
@@ -12,6 +13,7 @@ namespace TrafficRacer
     public class UIManager : MonoBehaviour
     {
         public static UIManager instance;
+       
 
                                                                     //references to important panels and holders
         [SerializeField] private GameObject mainMenu, gameMenu, gameOverMenu, selectPanel, selectHolder, carHolder;
@@ -105,9 +107,10 @@ namespace TrafficRacer
 
         public void SelectCarButton()                               //method called by Select car button
         {
-            GameManager.singeton.currentCarIndex = currentSelectedCarIndex; //set the GameManager currentCarIndex
-            LevelManager.instance.PlayerController.SpawnVehicle(GameManager.singeton.currentCarIndex); //spawn the respective car
-            OpenSelectPanel(false);                                 
+            Debug.Log("SelectCarButton clicked. Selected index: " + currentSelectedCarIndex);
+            GameManager.singeton.currentCarIndex = currentSelectedCarIndex;
+            LevelManager.instance.PlayerController.SpawnVehicle(currentSelectedCarIndex);
+            OpenSelectPanel(false);                                
         }
 
         void PopulateSelectPanel()                                  //method which spawn all the cars in Select Panel
@@ -120,9 +123,35 @@ namespace TrafficRacer
             }
         }
 
+        private void Update()
+        {
+            if (selectPanel.activeSelf) // Only listen when selection panel is open
+            {
+                if (Input.GetKeyDown(KeyCode.LeftArrow))
+                {
+                    if (currentSelectedCarIndex > 0)
+                    {
+                        currentSelectedCarIndex--;
+                        SetCarHolderPos();
+                    }
+                }
+                else if (Input.GetKeyDown(KeyCode.RightArrow))
+                {
+                    if (currentSelectedCarIndex < LevelManager.instance.VehiclePrefabs.Length - 1)
+                    {
+                        currentSelectedCarIndex++;
+                        SetCarHolderPos();
+                    }
+                }
+            }
+        }
+
+
         public void GameOver()
         {
             gameOverMenu.SetActive(true);
         }
+
+        
     }
 }
