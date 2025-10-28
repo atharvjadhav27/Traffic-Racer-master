@@ -23,7 +23,7 @@ namespace TrafficRacer
         {
             myBody = gameObject.GetComponent<Rigidbody>();          //get reference to Rigidbody
             myBody.isKinematic = true;                              //set isKinematic to false
-            myBody.useGravity = false;                              //set useGravity ture
+            myBody.useGravity = false;                              //set useGravity to false
             SpawnVehicle(GameManager.singeton.currentCarIndex);     //spawn the selected car
         }
 
@@ -32,22 +32,22 @@ namespace TrafficRacer
             InputManager.instance.swipeCallback += ActionOnSwipe;   //subscribe to the event
         }
 
-        public void SpawnVehicle(int index)                         //method alled to spawn the selected car
+        public void SpawnVehicle(int index)                         //method called to spawn the selected car
         {
             if (transform.childCount > 0)                           //check for the children
             {
                 Destroy(transform.GetChild(0).gameObject);          //destroy the 1st child
             }
 
-                                                                    //spawn he selected car as child
+            //spawn the selected car as child
             GameObject child = Instantiate(LevelManager.instance.VehiclePrefabs[index], transform);
             colliderComponent = child.GetComponent<Collider>();     //get reference to collider
             colliderComponent.isTrigger = true;                     //set isTrigger to true
         }
 
-        void ActionOnSwipe(SwipeType swipeType)                     //method alled on swipe action of InputManager
+        void ActionOnSwipe(SwipeType swipeType)                     //method called on swipe action of InputManager
         {
-            if (GameManager.singeton.gameStatus == GameStatus.PLAYING)  //is gamestatus is playing
+            if (GameManager.singeton.gameStatus == GameStatus.PLAYING)  //if gameStatus is playing
             {
                 switch (swipeType)
                 {
@@ -64,7 +64,26 @@ namespace TrafficRacer
             }
         }
 
-        private void OnTriggerEnter(Collider other)                 //Unity default mthod to detect collision
+        private void Update()
+        {
+            if (GameManager.singeton.gameStatus == GameStatus.PLAYING)
+            {
+                if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
+                {
+                    endXPos = transform.position.x - 3;
+                    endXPos = Mathf.Clamp(endXPos, -3, 3);
+                    transform.DOMoveX(endXPos, 0.15f);
+                }
+                else if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
+                {
+                    endXPos = transform.position.x + 3;
+                    endXPos = Mathf.Clamp(endXPos, -3, 3);
+                    transform.DOMoveX(endXPos, 0.15f);
+                }
+            }
+        }
+
+        private void OnTriggerEnter(Collider other)                 //Unity default method to detect collision
         {
             if (other.GetComponent<EnemyController>())              //check if the collided object has EnemyController on it
             {
@@ -74,11 +93,13 @@ namespace TrafficRacer
                     LevelManager.instance.GameOver();               //call GameOver
                     colliderComponent.isTrigger = false;            //set isTrigger to false
                     myBody.isKinematic = false;                     //set isKinematic to false
-                    myBody.useGravity = true;                       //set useGravity ture
+                    myBody.useGravity = true;                       //set useGravity to true
                     //add a random force
                     gameObject.GetComponent<Rigidbody>().AddForce(Random.insideUnitCircle.normalized * 100f);
                 }
+
             }
+
         }
     }
 }
