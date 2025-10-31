@@ -144,6 +144,35 @@ namespace TrafficRacer
                     }
                 }
             }
+
+
+
+            // Pause/Resume with Space key
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                if (Time.timeScale == 1f)
+                {
+                    Time.timeScale = 0f;
+                    Debug.Log("Game Paused");
+                }
+                else
+                {
+                    Time.timeScale = 1f;
+                    Debug.Log("Game Resumed");
+                }
+            }
+
+            // Quit with Escape key
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                Debug.Log("Quitting game...");
+                Application.Quit();
+
+            #if UNITY_EDITOR
+                UnityEditor.EditorApplication.isPlaying = false;
+            #endif
+            }
+
         }
 
 
